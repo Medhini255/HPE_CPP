@@ -1,1 +1,28 @@
+// After connecting prometheus , postgresql and victoria-metrics
+
+Step1 : Since there is no UI for victoria metrics we need to use grafana
+
+Step2 : Open grafana and login into it using prvided credentials
+	
+	http://localhost:3000 =====> Default
+
+Step3 : In grafana home page move to datasources option and select proemtheus option since Victora-metics option is not present directly
+
+Step4 : After step3 in url option 
+	
+	give below link :
+	http://localhost:8428/prometheus
+	
+	The above cmd is used to store values in victoria-metrics which is scraped from prometheus-API this POST request
+
+Step5 : Click on Save and Test
+
+Step6 : Now Go to Dashboard Import click on '+' sign and click on import option
+
+Step7 :  Enter Dashboard ID 9628 and then click on load
+
+Step8 : Then set datasource from dropdown and select with /prometheus so that it works properly
+
+
+You are good to go now....!!!!
 
