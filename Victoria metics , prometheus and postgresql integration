@@ -1,0 +1,21 @@
+//After downloading victoria metrics 
+
+Step1 : Begin postgresql on port 9188
+
+	Run these below cmds for the same in same order
+	export DATA_SOURCE_NAME="postgresql://prometheus:bmsce@localhost:5432/mydb?sslmode=disable"
+	postgres_exporter --web.listen-address=":9188" --web.telemetry-path="/metrics"
+
+Step2 : Make changes in prometheus.yml	
+	Add this at the end of file ensure indentation is correct
+	remote_write:
+  	      - url: "http://localhost:8428/api/v1/write"
+  	      
+Step3 : Start victoria-metrics using the below cmd:
+
+	./victoria-metrics-prod -retentionPeriod=1 -storageDataPath=./vm-data
+
+Step4 : Then start prometheus using using below cmd:
+
+	./prometheus
+
