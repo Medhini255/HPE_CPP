@@ -1,1 +1,10 @@
+Steps to install exporter
+1. git clone https://github.com/digitalocean/openvswitch_exporter.git
+2. cd openvswitch_exporter
+3. cd cmd
+4. cd openvswitch_exporter
+5. go build
+6. ./openvswitch_exporter
 
+Default running port-9310
+Description: This exporter exposes various metrics related to the Linux kernel Open vSwitch datapath using the generic netlink ovs_datapath family. 
