@@ -35,34 +35,8 @@ sudo systemctl enable grafana-server
 pip install requests
 
 🔹 Create monitor_ovs.py Script
-Save the following:
 
-import subprocess
-import time
-import requests
-
-INFLUXDB_URL = "http://localhost:8086/write?db=ovs_metrics"
-
-def get_ovs_stats():
-    try:
-        output = subprocess.check_output(['ovs-vsctl', 'show']).decode()
-        bridges = output.count("Bridge")
-        ports = output.count("Port")
-        interfaces = output.count("Interface")
-        return bridges, ports, interfaces
-    except Exception as e:
-        print("Error fetching OVS stats:", e)
-        return 0, 0, 0
-
-while True:
-    bridges, ports, interfaces = get_ovs_stats()
-    payload = f"ovs_stats bridges={bridges},ports={ports},interfaces={interfaces}"
-    try:
-        requests.post(INFLUXDB_URL, data=payload)
-        print(f"Sending to InfluxDB → Bridges: {bridges}, Ports: {ports}, Interfaces: {interfaces}")
-    except Exception as e:
-        print("Error sending to InfluxDB:", e)
-    time.sleep(5)
+add the python_script and Save the following:
 
 🔹 Run the Script
 sudo python3 monitor_ovs.py
@@ -83,22 +57,7 @@ sudo ovs-vsctl add-port br1 dummy2 -- set Interface dummy2 type=internal
 🔹 Recheck Updated Config
 sudo ovs-vsctl show
 
- 4. Setup Grafana
-
-Open Grafana in your browser:
-http://localhost:3000
-
-Default login:
-Username: admin
-Password: admin (you'll be asked to change it)
-
-Add InfluxDB as a Data Source:
-URL: http://localhost:8086
-Database: ovs_metrics
-
-Create a Dashboard → Add Panel
-Use the measurement ovs_stats and visualize bridges, ports, interfaces.
-
+4.Setup Grafana
 
 
 
@@ -142,19 +101,6 @@ print(f"Sending to InfluxDB → Bridges: {b}, Ports: {p}, Interfaces: {i}, Flows
 send_to_influx(b, p, i)
 time.sleep(10)
 
-🔹 Grafana Configuration for Flows
-
-Open Grafana Dashboard
-
-Create a new panel
-
-Query: SELECT * FROM "ovs_stats"
-
-Add flows field to visualize flow count
-
-Set visualization type to Graph or Table
-
-Save and apply changes
 
  7. Cleanup Commands (Optional)
 
