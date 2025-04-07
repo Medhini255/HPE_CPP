@@ -1,0 +1,164 @@
+ OVS + InfluxDB + Grafana Monitoring Setup
+Goal: Monitor Open vSwitch (OVS) stats and visualize them in Grafana using InfluxDB as the time-series database.
+
+ 1. Installation Steps
+
+🔹 Update & Upgrade System
+sudo apt update
+sudo apt upgrade
+
+🔹 Install Open vSwitch
+sudo apt install openvswitch-switch
+
+🔹 Install InfluxDB (v1.x)
+sudo apt install influxdb influxdb-client
+
+🔹 Start and Enable InfluxDB
+sudo systemctl start influxdb
+sudo systemctl enable influxdb
+
+🔹 Verify InfluxDB is Running
+curl -G http://localhost:8086/query --data-urlencode "q=SHOW DATABASES"
+
+🔹 Install Grafana
+sudo apt install -y apt-transport-https software-properties-common wget
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+sudo apt update
+sudo apt install grafana
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+
+ 2. Python Script Setup
+
+🔹 Install Requests Module
+pip install requests
+
+🔹 Create monitor_ovs.py Script
+Save the following:
+
+import subprocess
+import time
+import requests
+
+INFLUXDB_URL = "http://localhost:8086/write?db=ovs_metrics"
+
+def get_ovs_stats():
+    try:
+        output = subprocess.check_output(['ovs-vsctl', 'show']).decode()
+        bridges = output.count("Bridge")
+        ports = output.count("Port")
+        interfaces = output.count("Interface")
+        return bridges, ports, interfaces
+    except Exception as e:
+        print("Error fetching OVS stats:", e)
+        return 0, 0, 0
+
+while True:
+    bridges, ports, interfaces = get_ovs_stats()
+    payload = f"ovs_stats bridges={bridges},ports={ports},interfaces={interfaces}"
+    try:
+        requests.post(INFLUXDB_URL, data=payload)
+        print(f"Sending to InfluxDB → Bridges: {bridges}, Ports: {ports}, Interfaces: {interfaces}")
+    except Exception as e:
+        print("Error sending to InfluxDB:", e)
+    time.sleep(5)
+
+🔹 Run the Script
+sudo python3 monitor_ovs.py
+
+ 3. Configure OVS Bridges & Ports
+
+🔹 View Existing Setup
+sudo ovs-vsctl show
+
+🔹 Add Bridges and Ports
+sudo ovs-vsctl add-br br0
+sudo ovs-vsctl add-port br0 dummy0 -- set Interface dummy0 type=internal
+
+sudo ovs-vsctl add-br br1
+sudo ovs-vsctl add-port br1 dummy1 -- set Interface dummy1 type=internal
+sudo ovs-vsctl add-port br1 dummy2 -- set Interface dummy2 type=internal
+
+🔹 Recheck Updated Config
+sudo ovs-vsctl show
+
+ 4. Setup Grafana
+
+Open Grafana in your browser:
+http://localhost:3000
+
+Default login:
+Username: admin
+Password: admin (you'll be asked to change it)
+
+Add InfluxDB as a Data Source:
+URL: http://localhost:8086
+Database: ovs_metrics
+
+Create a Dashboard → Add Panel
+Use the measurement ovs_stats and visualize bridges, ports, interfaces.
+
+
+
+
+ 5. Cleanup Commands (Optional)
+sudo ovs-vsctl del-br br0
+sudo ovs-vsctl del-br br1
+
+
+
+ 6. Adding Flows Monitoring
+
+🔹 View Existing Flows
+sudo ovs-ofctl dump-flows br0
+
+🔹 Add Flows
+sudo ovs-ofctl add-flow br0 "priority=10,in_port=1,actions=output:2"
+sudo ovs-ofctl add-flow br0 "priority=10,in_port=2,actions=output:1"
+
+🔹 Verify Flow Table
+sudo ovs-ofctl dump-flows br0
+
+🔹 Modify Python Script for Flows Monitoring
+
+Add the following function to monitor flows:
+
+def get_ovs_flows():
+try:
+output = subprocess.check_output(["ovs-ofctl", "dump-flows", "br0"]).decode()
+flow_count = output.count("priority=")
+return flow_count
+except subprocess.CalledProcessError as e:
+print("Error fetching OVS flows:", e)
+return 0
+
+Modify the main loop to include flows:
+
+while True:
+b, p, i = get_ovs_stats()
+f = get_ovs_flows()
+print(f"Sending to InfluxDB → Bridges: {b}, Ports: {p}, Interfaces: {i}, Flows: {f}")
+send_to_influx(b, p, i)
+time.sleep(10)
+
+🔹 Grafana Configuration for Flows
+
+Open Grafana Dashboard
+
+Create a new panel
+
+Query: SELECT * FROM "ovs_stats"
+
+Add flows field to visualize flow count
+
+Set visualization type to Graph or Table
+
+Save and apply changes
+
+ 7. Cleanup Commands (Optional)
+
+sudo ovs-vsctl del-br br0
+sudo ovs-vsctl del-br br1
+
+
