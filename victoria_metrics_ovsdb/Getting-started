@@ -1,6 +1,12 @@
 To see the database schema-
 sudo ovsdb-client get-schema
 
+To see the databases-
+sudo ovsdb-client list-dbs
+
+To see the tables-
+sudo ovsdb-client list-tables
+
 -Creating and Managing Bridges:
   Create a Bridge
   sudo ovs-vsctl add-br br-dummy 
@@ -23,7 +29,7 @@ sudo ovsdb-client get-schema
 
  Managing datapaths and flows:
 
- Show the datapath values
+ Show the datapath table values
  sudo ovs-dpctl show
  >>system@ovs-system:
   lookups: hit:0 missed:0 lost:0
