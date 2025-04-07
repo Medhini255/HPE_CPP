@@ -1,0 +1,9 @@
+Step 1:Installation
+	 sudo apt install openswitch-switch
+
+Step 2:Status of ovs
+    	 sudo systemctl status openswitch-switch
+Step-3:Start ovs
+       sudo systemctl start openvswitch-switch
+Restart command-sudo systemctl restart openvswitch-switch
+Stop command-sudo systemctl stop openvswitch-switch
