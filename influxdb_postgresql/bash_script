@@ -1,0 +1,35 @@
+# 🛠️ Bash Script - Automate Setup
+
+Save this as `setup_monitoring.sh` and run with sudo.
+
+```bash
+#!/bin/bash
+
+POSTGRES_USER="postgres"
+POSTGRES_DB="postgresql"
+TELEGRAF_DB="postgresql"
+TELEGRAF_USER="telegraf"
+TELEGRAF_PASSWORD="telegrafpass"
+
+echo "🚀 Starting setup..."
+
+# PostgreSQL DB and Table
+sudo -u postgres psql <<EOF
+CREATE USER $TELEGRAF_USER WITH PASSWORD '$TELEGRAF_PASSWORD';
+CREATE DATABASE $POSTGRES_DB;
+GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $TELEGRAF_USER;
+EOF
+
+psql -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, name TEXT);"
+psql -U $POSTGRES_USER -d $POSTGRES_DB -c "INSERT INTO test_table (name) VALUES ('First'), ('Second'), ('Third');"
+
+# InfluxDB
+influx -execute "CREATE DATABASE $TELEGRAF_DB"
+
+# Copy telegraf.conf
+sudo cp telegraf/telegraf.conf /etc/telegraf/telegraf.conf
+
+# Restart Telegraf
+sudo systemctl restart telegraf
+
+echo "✅ Setup complete!"
