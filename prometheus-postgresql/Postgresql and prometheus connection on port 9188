@@ -1,0 +1,15 @@
+//After downloading prometheus , postgresql_exporter and postgres  and also after creating user prometheus with necessary permissions proceed with these steps
+
+Step1 : Begin postgresql on port 9188
+
+	Run these below cmds for the same in same order
+	export DATA_SOURCE_NAME="postgresql://prometheus:bmsce@localhost:5432/mydb?sslmode=disable"
+	postgres_exporter --web.listen-address=":9188" --web.telemetry-path="/metrics"
+
+Step2 : Then start prometheus using using below cmd:
+
+	./prometheus
+	
+	
+Note : Reason to run on port 9188 instead of 9187 is on port 9188 already postgres user is running but we need to run prometheus user so instead of changing the systemd requirements again and again we
+       can run it on port

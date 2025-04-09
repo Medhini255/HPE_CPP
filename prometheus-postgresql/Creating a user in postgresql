@@ -1,0 +1,21 @@
+// Steps to create a user in postgresql
+
+Step1 : sudo -u postgres psql
+
+Stpe2 : Run this below cmd
+	CREATE USER <userName> WITH PASSWORD '<yourPasswordforUser>';
+
+Step3 : GRANT CONNECT ON DATABASE <your_db_name> TO <your Username>;
+
+Step4 : Now change to database you created
+	\c your_db_name
+
+Step5 : And run these cmds as per sequence only
+
+GRANT USAGE ON SCHEMA public TO <your Username>;
+GRANT SELECT ON pg_stat_database TO <your Username>;
+GRANT SELECT ON pg_stat_user_tables TO <your Username>;
+GRANT SELECT ON pg_stat_activity TO <your Username>;
+GRANT SELECT ON pg_stat_bgwriter TO <your Username>;
+
+Step6 : 

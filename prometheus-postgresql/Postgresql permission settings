@@ -1,0 +1,11 @@
+Step1 : ls -ld /home/<root user>/<project directory>/<service directory>
+
+Step2 : ls -ld /home/<root user> /home/<root user>/<project directory>
+
+Step3 : sudo chmod o+rx /home/<root user> /home/<root user>/<project directory>
+
+Step4 : sudo -u postgres psql ====> Now works correctly
+
+
+
+

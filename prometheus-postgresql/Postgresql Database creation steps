@@ -1,0 +1,26 @@
+// Steps to create database and table in postgresql
+
+Step1 : sudo -u postgres psql
+
+Step2 : CREATE DATABASE my_database;  ===> replace my_database name with desired name
+
+Step3 : \l  =====> to check if database is created successfully
+
+Step4 : \c my_database ====> to change to databse my_database
+
+Step5 : CREATE TABLE metrics (
+    id SERIAL PRIMARY KEY,
+    metric_name TEXT NOT NULL,
+    value DOUBLE PRECISION NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+// this is a sample u can shoose anything
+
+Step6 : INSERT INTO metrics (metric_name, value) VALUES ('cpu_usage', 75.5);  ==> sample value inserted
+
+Step7 : That's it you are good to go
+
+
+
