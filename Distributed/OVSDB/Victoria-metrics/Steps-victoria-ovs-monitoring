@@ -4,9 +4,9 @@ Step-1: Allow tcp on the port on which ovs exporter is running-
         sudo ufw allow <port-no>/tcp
 Step-2: Get Machine A's ip-
         hostname -I
-Step-2: Start openvswitch database-
+Step-3: Start openvswitch database-
         sudo systemctl start openvswitch-switch
-Step-3: Run the ovs-exporter
+Step-4: Run the ovs-exporter
         cd ovs_exporter
         make
         make qtest
