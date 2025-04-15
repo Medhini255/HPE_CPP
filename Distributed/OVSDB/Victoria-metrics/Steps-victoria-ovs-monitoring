@@ -1,0 +1,27 @@
+Steps to ovsdb running on remote machine using victoria-metrics-
+Machine-A(OVSDB running)
+Step-1: Allow tcp on the port on which ovs exporter is running-
+        sudo ufw allow <port-no>/tcp
+Step-2: Get Machine A's ip-
+        hostname -I
+Step-2: Start openvswitch database-
+        sudo systemctl start openvswitch-switch
+Step-3: Run the ovs-exporter
+        cd ovs_exporter
+        make
+        make qtest
+Default running port of exporter=5000
+
+Machine-B(Victoria Metrics running)
+Step-1: Add Machine-A's configuration to Machine-B's victoriametrics.yml file-
+        sudo nano /etc/victoriametrics/victoriametrics.yml
+        - job_name: 'ovs_machine-A'
+          static_configs:
+            - targets: ['<machine-A-ip>:<exporter-port-no>']
+Step-2: sudo systemctl daemon-reload
+Step-3: Start Victoria Metrics
+        sudo victoria-metrics -storageDataPath=/var/lib/victoria-metrics -promscrape.config=/etc/victoriametrics/victoriametrics.yml
+Step-4: Check for the target's metrics-
+        curl http://<machine-A-ip>:<exporter-port-no>/metrics
+Step-5: Run the queries on victoria metrics ui-
+        For example-ovs_dp_br_if_total (number of interfaces under each bridge)
