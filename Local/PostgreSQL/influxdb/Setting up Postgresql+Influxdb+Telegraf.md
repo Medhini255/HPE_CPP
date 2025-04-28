@@ -1,6 +1,6 @@
-# 📦 Setting up PostgreSQL + InfluxDB + Telegraf
+#  Setting up PostgreSQL + InfluxDB + Telegraf
 
-## 1️⃣ PostgreSQL Setup
+## 1️ PostgreSQL Setup
 ```bash
 sudo -u postgres psql
 CREATE USER telegraf WITH PASSWORD 'telegrafpass';
@@ -8,7 +8,7 @@ CREATE DATABASE postgresql;
 GRANT ALL PRIVILEGES ON DATABASE postgresql TO telegraf;
 ```
 
-## 2️⃣ Create Table and Insert Data
+## 2️ Create Table and Insert Data
 ```sql
 CREATE TABLE test_table (
     id SERIAL PRIMARY KEY,
@@ -20,13 +20,13 @@ INSERT INTO test_table (name) VALUES ('Second');
 INSERT INTO test_table (name) VALUES ('Third');
 ```
 
-## 3️⃣ InfluxDB Setup
+## 3️ InfluxDB Setup
 ```bash
 influx
 CREATE DATABASE postgresql
 ```
 
-## 4️⃣ Telegraf Config Sample (place in /etc/telegraf/telegraf.conf)
+## 4️ Telegraf Config Sample (place in /etc/telegraf/telegraf.conf)
 ```toml
 [[inputs.postgresql_extensible]]
   address = "host=localhost user=telegraf password=telegrafpass dbname=postgresql sslmode=disable"
@@ -38,6 +38,6 @@ CREATE DATABASE postgresql
     measurement="test_table_rows"
 ```
 
-## 5️⃣ Restart Telegraf
+## 5️ Restart Telegraf
 ```bash
 sudo systemctl restart telegraf
