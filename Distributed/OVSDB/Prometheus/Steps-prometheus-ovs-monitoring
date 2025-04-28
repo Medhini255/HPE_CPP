@@ -1,27 +1,27 @@
-Steps to ovsdb running on remote machine using prometheus-
+# Steps to ovsdb running on remote machine using prometheus-
 Machine-A(OVSDB running)
-Step-1: Allow tcp on the port on which ovs exporter is running-
-        sudo ufw allow <port-no>/tcp
-Step-2: Get Machine A's ip-
-        hostname -I
-Step-3: Start openvswitch database-
-        sudo systemctl start openvswitch-switch
-Step-4: Run the ovs-exporter
-        cd ovs_exporter
-        make
-        make qtest
-Default running port of exporter=5000
+- Step-1: Allow tcp on the port on which ovs exporter is running-
+          sudo ufw allow <port-no>/tcp
+- Step-2: Get Machine A's ip-
+          hostname -I
+- Step-3: Start openvswitch database-
+          sudo systemctl start openvswitch-switch
+- Step-4: Run the ovs-exporter
+          cd ovs_exporter
+          make
+          make qtest
+**Default running port of exporter=5000**
 
 Machine-B(Prometheus running)
-Step-1: Add Machine-A's configuration to Machine-B's prometheus.yml file-
-        sudo nano /etc/prometheus/prometheus.yml
-        - job_name: 'ovs_machine-A'
-          static_configs:
-            - targets: ['<machine-A-ip>:<exporter-port-no>']
-Step-2: sudo systemctl daemon-reload
-Step-3: Start Prometheus
-        sudo systemctl start prometheus
-Step-4: Check for the target's metrics-
-        curl http://<machine-A-ip>:<exporter-port-no>/metrics
-Step-5: Run the queries on prometheus ui-
-        For example-ovs_dp_br_if_total (number of interfaces under each bridge)
+- Step-1: Add Machine-A's configuration to Machine-B's prometheus.yml file-
+          sudo nano /etc/prometheus/prometheus.yml
+          - job_name: 'ovs_machine-A'
+            static_configs:
+             - targets: ['<machine-A-ip>:<exporter-port-no>']
+- Step-2: sudo systemctl daemon-reload
+- Step-3: Start Prometheus
+          sudo systemctl start prometheus
+- Step-4: Check for the target's metrics-
+          curl http://<machine-A-ip>:<exporter-port-no>/metrics
+- Step-5: Run the queries on prometheus ui-
+          For example-ovs_dp_br_if_total (number of interfaces under each bridge)
