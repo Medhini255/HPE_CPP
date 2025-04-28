@@ -1,27 +1,63 @@
-// After connecting prometheus , postgresql and victoria-metrics
+# Connecting Prometheus, PostgreSQL, and VictoriaMetrics with Grafana
 
-Step1 : Since there is no UI for victoria metrics we need to use grafana
+---
 
-Step2 : Open grafana and login into it using prvided credentials
-	
-	http://localhost:3000 =====> Default
+## Step 1: Use Grafana for Visualization
 
-Step3 : In grafana home page move to datasources option and select proemtheus option since Victora-metics option is not present directly
+Since VictoriaMetrics does not have a native UI, we will use **Grafana** for visualization.
 
-Step4 : After step3 in url option 
-	
-	give below link :
-	http://localhost:8428/prometheus
-	
-	The above cmd is used to store values in victoria-metrics which is scraped from prometheus-API this POST request
+---
 
-Step5 : Click on Save and Test
+## Step 2: Open Grafana and Login
 
-Step6 : Now Go to Dashboard Import click on '+' sign and click on import option
+- Access Grafana through your browser:
+  
+  ```
+  http://localhost:3000
+  ```
+- Use the provided default credentials (Username: `admin`, Password: `admin`).
 
-Step7 :  Enter Dashboard ID 9628 and then click on load
+---
 
-Step8 : Then set datasource from dropdown and select with /prometheus so that it works properly
+## Step 3: Configure Data Source
 
+- On the Grafana home page, navigate to **"Data Sources"**.
+- Select **Prometheus** as the data source (VictoriaMetrics option is not directly available).
 
-You are good to go now....!!!!
+---
+
+## Step 4: Set the Data Source URL
+
+- In the URL field, enter:
+
+  ```
+  http://localhost:8428/prometheus
+  ```
+- This URL will allow Grafana to POST the scraped data from Prometheus to VictoriaMetrics.
+
+---
+
+## Step 5: Save and Test the Connection
+
+- Click on **Save & Test** to verify the connection.
+
+---
+
+## Step 6: Import a Dashboard
+
+- Go to the **"+"** icon on the left side.
+- Click on **"Import"**.
+
+---
+
+## Step 7: Load Dashboard by ID
+
+- Enter the **Dashboard ID: 9628**.
+- Click **Load**.
+
+---
+
+## Step 8: Set the Correct Data Source
+
+- In the dropdown, select the data source ending with `/prometheus`.
+- This ensures correct linkage between Grafana and VictoriaMetrics via Prometheus.
