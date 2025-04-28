@@ -38,5 +38,3 @@ sudo victoria-metrics -storageDataPath=/var/lib/victoria-metrics -promscrape.con
 ## Step 8: Verify Installation
 ```bash
 curl http://localhost:8428
-```
-```
