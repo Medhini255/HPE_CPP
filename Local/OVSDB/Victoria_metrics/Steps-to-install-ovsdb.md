@@ -23,5 +23,3 @@ sudo systemctl restart openvswitch-switch
 ### Stop Open vSwitch
 ```bash
 sudo systemctl stop openvswitch-switch
-```
-```
