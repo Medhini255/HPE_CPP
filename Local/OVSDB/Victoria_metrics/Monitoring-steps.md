@@ -54,4 +54,3 @@ Use the Victoria Metrics UI to run the following queries:
 - **openvswitch_datapath_stats_flows**: Packet flows.
 - **openvswitch_datapath_stats_misses**: Missed packets.
 - **openvswitch_datapath_stats_hits**: Packet hits.
-```
