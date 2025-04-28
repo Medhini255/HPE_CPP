@@ -42,4 +42,3 @@ curl http://localhost:8428/health
 - If it returns `"OK"`, the setup is successful!
 
 ---
-```
