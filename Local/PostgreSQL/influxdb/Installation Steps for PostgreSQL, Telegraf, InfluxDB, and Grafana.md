@@ -70,4 +70,3 @@ sudo systemctl enable grafana-server.service
 - **Default Credentials:**
   - Username: `admin`
   - Password: `admin`
-```
