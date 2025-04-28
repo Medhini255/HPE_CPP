@@ -41,4 +41,3 @@ Use the following command to start Prometheus:
 ```bash
 ./prometheus
 ```
-```
