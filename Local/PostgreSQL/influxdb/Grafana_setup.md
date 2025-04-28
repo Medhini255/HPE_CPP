@@ -1,4 +1,4 @@
-# 📊 How to View Graph in Grafana
+#  How to View Graph in Grafana
 
 1. Go to **Grafana Dashboard** → Add Panel → Time Series.
 2. Select your **data source** as `influxdb-2` or your custom one.
