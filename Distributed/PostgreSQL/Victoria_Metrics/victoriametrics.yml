@@ -1,0 +1,17 @@
+  GNU nano 6.2        /etc/victoriametrics/victoriametrics.yml                  
+scrape_configs:
+ - job_name: 'node_exporter'
+   static_configs:
+    - targets: ['localhost:9100']
+ - job_name: 'ovs_exporter'
+   static_configs:
+    - targets: ['localhost:9310']
+ - job_name: 'ovs_monitor'
+   static_configs:
+    - targets: ['localhost:5000']
+ - job_name: 'ovs_sharath'
+   static_configs:
+    - targets: ['192.168.134.196:9101']
+ - job_name: 'post'
+   static_configs:
+    - targets: ['192.168.47.250:9187']
