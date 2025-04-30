@@ -1,163 +1,86 @@
-# OVS + InfluxDB + Grafana Monitoring Setup
-
-## Goal
-Monitor Open vSwitch (OVS) stats and visualize them in Grafana using InfluxDB as the time-series database.
+# OVSDB Monitoring Setup Log
 
 ---
 
-## 1. Installation Steps
+## 1. Install InfluxDB
 
-### Update & Upgrade System
+### a) Add InfluxDB Repository
+
 ```bash
-sudo apt update  
-sudo apt upgrade
+wget -qO- https://repos.influxdata.com/influxdb.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/influxdb.gpg
+echo "deb https://repos.influxdata.com/ubuntu focal stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+sudo apt update
 ```
-
-### Install Open vSwitch
+### b) Install and Start InfluxDB
 ```bash
-sudo apt install openvswitch-switch
-```
-
-### Install InfluxDB (v1.x)
-```bash
-sudo apt install influxdb influxdb-client
-```
-
-### Start and Enable InfluxDB
-```bash
-sudo systemctl start influxdb  
+sudo apt install influxdb
+sudo systemctl start influxdb
 sudo systemctl enable influxdb
 ```
-
-### Verify InfluxDB is Running
+## 2. Create Monitoring Database
 ```bash
-curl -G http://localhost:8086/query --data-urlencode "q=SHOW DATABASES"
+influx
 ```
-
-### Install Grafana
+```sql
+> CREATE DATABASE ovsdb_monitoring;
+> SHOW DATABASES;
+```
+## 3. Install Telegraf
 ```bash
-sudo apt install -y apt-transport-https software-properties-common wget  
-wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -  
-echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list  
-sudo apt update  
-sudo apt install grafana  
-sudo systemctl start grafana-server  
-sudo systemctl enable grafana-server
+sudo apt install telegraf
+sudo systemctl enable telegraf
+sudo systemctl start telegraf
 ```
-
----
-
-## 2. Python Script Setup
-
-### Install Requests Module
+## 4. Configure Telegraf to Scrape OVSDB Exporter
+### Edit Telegraf configuration:
 ```bash
-pip install requests
+sudo nano /etc/telegraf/telegraf.conf
 ```
+### Add the following configuration:
+```toml
 
-### Create `monitor_ovs.py` Script
-Add your Python script (example content should be filled here).
+[[inputs.prometheus]]
+  urls            = ["http://localhost:5000/metrics"]
+  metric_version  = 2
+  name_override   = "ovsdb_exporter"
 
-### Run the Script
+[[outputs.influxdb]]
+  urls     = ["http://127.0.0.1:8086"]
+  database = "ovsdb_monitoring"
+  username = "admin"
+  password = "newStrongPassword"
+```
+## 5. Error: HTTPS vs HTTP Mismatch
+Resolution: Changed urls to use http://localhost:5000/metrics.
+
+## 6. Verify Metrics in InfluxDB
 ```bash
-sudo python3 monitor_ovs.py
+
+influx
 ```
-
----
-
-## 3. Configure OVS Bridges & Ports
-
-### View Existing Setup
-```bash
-sudo ovs-vsctl show
+```sql
+> USE ovsdb_monitoring;
+> SHOW MEASUREMENTS;
+> SHOW FIELD KEYS FROM "ovsdb_exporter";
 ```
+## 7. Grafana Setup & Authentication
+### If Grafana admin password is forgotten:
+``` bash
 
-### Add Bridges and Ports
-```bash
-sudo ovs-vsctl add-br br0  
-sudo ovs-vsctl add-port br0 dummy0 -- set Interface dummy0 type=internal
-
-sudo ovs-vsctl add-br br1  
-sudo ovs-vsctl add-port br1 dummy1 -- set Interface dummy1 type=internal  
-sudo ovs-vsctl add-port br1 dummy2 -- set Interface dummy2 type=internal
+sudo grafana-cli admin reset-admin-password NewPass123
+sudo systemctl restart grafana-server
 ```
-
-### Recheck Updated Config
-```bash
-sudo ovs-vsctl show
+## 8. Dashboard Recommendations
+### Panel: Total OVS Ports
+```sql
+SELECT last("ovs_dp_br_if_total") FROM "ovsdb_exporter"
 ```
+Panel: RX/TX Rate
 
----
-
-## 4. Setup Grafana
-- Open Grafana in your browser:  
-  `http://localhost:3000`
-- Default login:  
-  Username: `admin`  
-  Password: `admin` (you'll be asked to change it)
-- Add **InfluxDB** as a Data Source:  
-  URL: `http://localhost:8086`  
-  Database: `ovs_metrics`
-- Create a Dashboard → Add Panel  
-- Use the measurement `ovs_stats` and visualize bridges, ports, interfaces.
-
----
-
-## 5. Cleanup Commands (Optional)
-```bash
-sudo ovs-vsctl del-br br0  
-sudo ovs-vsctl del-br br1
+```sql
+SELECT non_negative_derivative(mean("ovs_interface_rx_bytes"),1s) AS RX_Bps,
+       non_negative_derivative(mean("ovs_interface_tx_bytes"),1s) AS TX_Bps
+FROM "ovsdb_exporter" 
+WHERE $timeFilter 
+GROUP BY time($__interval)
 ```
-
----
-
-## 6. Adding Flows Monitoring
-
-###  View Existing Flows
-```bash
-sudo ovs-ofctl dump-flows br0
-```
-
-###  Add Flows
-```bash
-sudo ovs-ofctl add-flow br0 "priority=10,in_port=1,actions=output:2"  
-sudo ovs-ofctl add-flow br0 "priority=10,in_port=2,actions=output:1"
-```
-
-###  Verify Flow Table
-```bash
-sudo ovs-ofctl dump-flows br0
-```
-
-###  Modify Python Script for Flows Monitoring
-
-Add this function to monitor flows:
-```python
-def get_ovs_flows():
-    try:
-        output = subprocess.check_output(["ovs-ofctl", "dump-flows", "br0"]).decode()
-        flow_count = output.count("priority=")
-        return flow_count
-    except subprocess.CalledProcessError as e:
-        print("Error fetching OVS flows:", e)
-        return 0
-```
-
-Modify the main loop to include flows:
-```python
-while True:
-    b, p, i = get_ovs_stats()
-    f = get_ovs_flows()
-    print(f"Sending to InfluxDB → Bridges: {b}, Ports: {p}, Interfaces: {i}, Flows: {f}")
-    send_to_influx(b, p, i)
-    time.sleep(10)
-```
-
----
-
-## 7. Cleanup Commands (Optional)
-```bash
-sudo ovs-vsctl del-br br0  
-sudo ovs-vsctl del-br br1
-```
-
----
