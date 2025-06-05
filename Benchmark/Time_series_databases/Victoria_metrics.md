@@ -1,8 +1,8 @@
-Perfect — since you’ve already installed **VictoriaMetrics natively (not using Docker)**, you can follow the same TSBS steps **without Docker**, by targeting your local VictoriaMetrics installation directly.
+
 
 ---
 
-##  Steps to Benchmark VictoriaMetrics Without Docker
+##  Steps to Benchmark VictoriaMetrics 
 
 ---
 
