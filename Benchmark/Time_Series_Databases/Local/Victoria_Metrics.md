@@ -105,7 +105,7 @@ Look for:
 * `vm_rows_inserted_total`
 * `vm_queries_total`
 * `vm_query_duration_seconds`
-
+Repeat the same for 1000,10000 queries.
 These help correlate TSBS benchmark results with actual VM behavior.
 
 ---
