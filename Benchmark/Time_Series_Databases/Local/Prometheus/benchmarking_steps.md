@@ -53,7 +53,7 @@ Visit: http://localhost:8000/metrics
 ## Step 4: Configure Prometheus to Scrape the Exporter
 Now we tell Prometheus to scrape metrics from your synthetic exporter at http://localhost:8000/metrics.
 
-# Instructions:
+### Instructions:
 Open the prometheus.yml config file (in your Prometheus folder).
 
 Under the scrape_configs: section, add a new job like this:
@@ -88,7 +88,7 @@ Now that Prometheus is scraping 10,000+ metrics, we’ll query internal Promethe
 
 Go to http://localhost:9090 and run the following queries in the Prometheus "Graph" tab:
 
-# Queries to Measure Scrape Load
+### Queries to Measure Scrape Load
 Scrape duration for your exporter:
 
 ```promql
@@ -138,7 +138,7 @@ Recording how Prometheus behaves under this load using its own metrics — this 
 
 Using built-in Prometheus UI-
 
-# Key Metrics to Query Over Time (on http://localhost:9090/graph):
+### Key Metrics to Query Over Time (on http://localhost:9090/graph):
 Scrape duration (check if it’s nearing 15s interval):
 
 ```promql
@@ -180,13 +180,13 @@ Python script for-
 
 - Extending later to visualize or analyze trends
 
-# Step 8A: Install Required Python Library
+### Step 8A: Install Required Python Library
 
 Command to Install:
 ```bash
 pip install requests
 ```
-# Step 8B: Python Script to Log Prometheus Benchmark Metrics
+### Step 8B: Python Script to Log Prometheus Benchmark Metrics
 This script will:
 
 - Send PromQL queries to Prometheus
