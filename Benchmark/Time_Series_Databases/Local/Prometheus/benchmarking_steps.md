@@ -33,7 +33,7 @@ Exposes a large number of custom metrics (e.g., 10,000+)
 Is scrape-compatible with Prometheus (/metrics endpoint)
 
 Runs locally for easy testing
-# Instructions
+### Instructions
 a. Install Prometheus client library:
 ```bash
 pip install prometheus_client
