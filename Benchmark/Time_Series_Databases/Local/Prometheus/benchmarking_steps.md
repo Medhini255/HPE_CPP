@@ -59,7 +59,6 @@ Open the prometheus.yml config file (in your Prometheus folder).
 Under the scrape_configs: section, add a new job like this:
 
 ```yaml
-
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
@@ -92,19 +91,16 @@ Go to http://localhost:9090 and run the following queries in the Prometheus "Gra
 Scrape duration for your exporter:
 
 ```promql
-
 scrape_duration_seconds{job="synthetic_exporter"}
 ```
 Scrape samples ingested per second:
 
 ```promql
-
 rate(prometheus_scrape_sample_ingestion_rate[1m])
 ```
 Scrape failures (if any):
 
 ```promql
-
 scrape_samples_scraped{job="synthetic_exporter"}
 ```
 ---
@@ -142,31 +138,26 @@ Using built-in Prometheus UI-
 Scrape duration (check if it’s nearing 15s interval):
 
 ```promql
-
 max_over_time(scrape_duration_seconds{job="synthetic_exporter"}[5m])
 ```
 Sample ingestion rate (global):
 
 ```promql
-
 rate(prometheus_tsdb_head_samples_appended_total[1m])
 ```
 Total time series count:
 
 ```promql
-
 prometheus_tsdb_head_series
 ```
 Scrape errors (should be 0 ideally):
 
 ```promql
-
 increase(scrape_samples_scraped{job="synthetic_exporter"}[5m])
 ```
 Target scrape health:
 
 ```promql
-
 up{job="synthetic_exporter"}
 ```
 
@@ -194,10 +185,12 @@ This script will:
 - Log key performance metrics every 10 seconds
   
 Tasks-
+
 i) Save this as prometheus_benchmark_logger.py
+
 ii) Run it:
 ```bash
-    
     python3 prometheus_benchmark_logger.py
 ```
+
 iii) Watch the output
