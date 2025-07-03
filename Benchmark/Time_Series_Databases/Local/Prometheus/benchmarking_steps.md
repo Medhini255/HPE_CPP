@@ -140,23 +140,8 @@ Scrape duration (check if it’s nearing 15s interval):
 ```promql
 max_over_time(scrape_duration_seconds{job="synthetic_exporter"}[5m])
 ```
-Sample ingestion rate (global):
 
-```promql
-rate(prometheus_tsdb_head_samples_appended_total[1m])
-```
-Total time series count:
-
-```promql
-prometheus_tsdb_head_series
-```
-Scrape errors (should be 0 ideally):
-
-```promql
-increase(scrape_samples_scraped{job="synthetic_exporter"}[5m])
-```
 Target scrape health:
-
 ```promql
 up{job="synthetic_exporter"}
 ```
