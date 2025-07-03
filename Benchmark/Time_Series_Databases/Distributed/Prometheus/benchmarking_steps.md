@@ -1,4 +1,4 @@
-# Benchmarking Prometheus Scrape Performance
+# Benchmarking Prometheus Scrape Performance for Distributed Setup (Prometheus running on Machine B and load_exporter on Machine A)
 
 ## Step 1: Define What You Want to Benchmark in Prometheus
 
@@ -51,7 +51,7 @@ Visit: http://remote-machine-ip:8000/metrics
 ---
 
 ## Step 4: Configure Prometheus to Scrape the Exporter
-Now we tell Prometheus to scrape metrics from your synthetic exporter at http://localhost:8000/metrics.
+Now we tell Prometheus to scrape metrics from your synthetic exporter at http://remote-machine-ip:8000/metrics.
 
 ### Instructions:
 Open the prometheus.yml config file (in your Prometheus folder).
