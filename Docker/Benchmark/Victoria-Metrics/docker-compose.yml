@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics
+    container_name: victoria-metrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - victoria_data:/storage
+    command:
+      - "-retentionPeriod=1"
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitor-net
+
+  loadgen:
+    build: ./loadgen
+    depends_on:
+      - victoria-metrics
+    networks:
+      - monitor-net
+
+volumes:
+  victoria_data:
+  grafana_data:
+
+networks:
+  monitor-net:
+    driver: bridge
