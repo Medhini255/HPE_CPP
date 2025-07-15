@@ -68,7 +68,7 @@ http://localhost:9090/
 
 Paste the following query into the Prometheus UI query bar:
 
-``sql
+```sql
 max_over_time(scrape_duration_seconds{job="loadgen"}[1m])
 ```
 
