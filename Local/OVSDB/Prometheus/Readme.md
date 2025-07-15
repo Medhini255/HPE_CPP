@@ -130,5 +130,3 @@ chmod +x ovs_traffic_gen.sh
 - Internal ports are created dynamically and traffic is generated using `iperf3` clients and a server running in network namespaces.
 
 This setup allows monitoring of OVSDB activity through Prometheus and simulates network traffic for observability and testing.
-
-Let me know if you also need the Prometheus configuration or a Grafana dashboard template.
