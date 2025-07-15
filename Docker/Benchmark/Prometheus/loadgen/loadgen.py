@@ -1,15 +1,33 @@
-from flask import Response, Flask
-from prometheus_client import Gauge, generate_latest
-import random, time
+from prometheus_client import start_http_server, Gauge
+import random
+import time
 
-app = Flask(__name__)
-metric = Gauge('simulated_metric', 'Simulated Metric', ['label'])
+# Use a single metric with labels to create high cardinality
+metric = Gauge('custom_metric', 'High cardinality metric', ['region', 'instance', 'job', 'metric_id'])
 
-@app.route('/metrics')
-def metrics():
-    for i in range(1000):  # Simulate high cardinality
-        metric.labels(label=f'label_{i}').set(random.random())
-    return Response(generate_latest(), mimetype='text/plain')
+# Generate 10,000 unique label combinations
+label_sets = []
+for metric_id in range(1000):  # 1000 distinct metric_ids
+    for region in range(2):    # 2 regions
+        for instance in range(5):  # 5 instances
+            for job in range(1):  # 1 job
+                label_sets.append({
+                    'region': f'region_{region}',
+                    'instance': f'inst_{instance}',
+                    'job': f'job_{job}',
+                    'metric_id': f'id_{metric_id}'
+                })
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000) 
+def update_metrics():
+    while True:
+        for labels in label_sets:
+            metric.labels(**labels).set(random.random())
+        time.sleep(1)
+
+if __name__ == "__main__":
+    start_http_server(8000)
+    print("Exporter running on http://localhost:8000/metrics with high cardinality")
+    update_metrics()
+
+
+#scrape_duration_seconds search this 
