@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - monitor-net
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitor-net
+
+  loadgen:
+    build: ./loadgen
+    ports:
+      - "8000:8000"
+    networks:
+      - monitor-net
+  
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - monitor-net
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  monitor-net:
+    driver: bridge
