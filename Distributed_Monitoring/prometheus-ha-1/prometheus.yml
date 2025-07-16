@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+  external_labels:
+    replica: ha-1
+
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['172.17.0.1:9100']
+
+  - job_name: 'ovsdb'
+    static_configs:
+      - targets: ['ovsdb-exporter:9101']
+
+
+
+remote_write:
+  - url: "http://victoriametrics:8428/api/v1/write"
