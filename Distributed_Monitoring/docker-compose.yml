@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  prometheus-ha-1:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus-ha-1/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9091:9090"
+    networks:
+      - monitor-net
+
+  prometheus-ha-2:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus-ha-2/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9092:9090"
+    networks:
+      - monitor-net
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - victoria_data:/victoria-metrics-data
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitor-net
+  
+  ovsdb-exporter:
+    build:
+      context: ./ovsdb-exporter
+    container_name: ovsdb-exporter
+    
+    volumes:
+      - /var/run/openvswitch:/var/run/openvswitch
+    user: root
+    restart: unless-stopped
+    networks:
+      - monitor-net
+
+volumes:
+  victoria_data:
+  grafana_data:
+
+networks:
+  monitor-net:
+    driver: bridge
