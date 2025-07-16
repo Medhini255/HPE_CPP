@@ -1,1 +1,29 @@
+version: "3.7"
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      monitor-net:
+        ipv4_address: 172.30.2.2
+
+  exporter:
+    build: ./exporter
+    user: "root"
+    volumes:
+      - /var/run/openvswitch/:/var/run/openvswitch/
+    networks:
+      monitor-net:
+        ipv4_address: 172.30.2.1
+
+networks:
+  monitor-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
 
