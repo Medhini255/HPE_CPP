@@ -14,12 +14,12 @@ This project sets up a **distributed monitoring system** using **Prometheus**, *
 ## Architecture
 
 System A:
-├── Prometheus (port 9090)
-├── VictoriaMetrics (port 8428)
-└── InfluxDB (port 8086)
+- Prometheus (port 9090)
+- VictoriaMetrics (port 8428)
+- InfluxDB (port 8086)
 
 System B (Remote Node):
-└── Pushes metrics / exposes exporters / sends data to TSDBs
+- Pushes metrics / exposes exporters / sends data to TSDBs
 
 ---
 
