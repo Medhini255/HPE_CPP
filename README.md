@@ -1,4 +1,30 @@
-# Monitoring
+# Distributed Monitoring with Prometheus, VictoriaMetrics & InfluxDB
+
+This project sets up a **distributed monitoring system** using **Prometheus**, **VictoriaMetrics**, and **InfluxDB** across multiple systems in the same network.
+
+## Project Goals
+
+- Deploy Prometheus, VictoriaMetrics, and InfluxDB on **System A**
+- Send ovsdb and postgresql metrics from **System B**
+- Monitor and validate metric flow across the network
+- Enable future benchmarking and visualization
+
+---
+
+## Architecture
+
+System A:
+├── Prometheus (port 9090)
+├── VictoriaMetrics (port 8428)
+└── InfluxDB (port 8086)
+
+System B (Remote Node):
+└── Pushes metrics / exposes exporters / sends data to TSDBs
+
+---
+
+## Version Details
+
 Prometheus version details-
 prometheus, version 2.31.2+ds1 (branch: debian/sid, revision: 2.31.2+ds1-1ubuntu1.22.04.3)
   build user:       team+pkg-go@tracker.debian.org
